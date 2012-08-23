@@ -351,13 +351,13 @@ module EventMachine
             process_auth_plain_line($')
           end
         elsif str =~ /\ALOGIN\s?/i
+          @state << :auth_login_incomplete
           if $'.length == 0
-            @state << :auth_login_incomplete
-            send_data("334 \r\n")
+            # sending Username:
+            send_data("334 VXNlcm5hbWU6\r\n")
           else
             process_auth_login_line($')
           end
-
         else
           send_data "504 auth mechanism not available\r\n"
         end
@@ -370,7 +370,8 @@ module EventMachine
           process_plain_auth(@login_auth.shift, @login_auth.shift)
           @state.delete :auth_login_incomplete
         else
-          send_data("334 \r\n")
+          # sending Password:
+          send_data("334 UGFzc3dvcmQ6\r\n")
         end
       end
 
